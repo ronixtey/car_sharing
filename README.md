@@ -1,5 +1,3 @@
-### Swagger sample
-
 ### Installation
 
 `npm install`
