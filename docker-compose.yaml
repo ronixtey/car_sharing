@@ -3,9 +3,15 @@ services:
   postgres:
     image: postgres
     restart: always
-    ports:
-      - 5431:5432
+    # ports:
+      # - 5431:5432
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: postgres
+  car_sharing:
+    build: .
+    image: car_sharing:1.0
+    ports: 
+      - 3000:3000
+    command: npm start

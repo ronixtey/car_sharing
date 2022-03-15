@@ -28,8 +28,6 @@ export class RentService {
 		const car_id = create_rent.carId;
 		const cost = this.calcCost(create_rent.days);
 		try {
-			// values(${ car_id }, '${start_date.toLocaleDateString()}', '${end_date.toLocaleDateString()}', ${ cost })
-
 			const res = await client.query(`
 				insert into rent (car_id, start_date, end_date, cost)
 				values ($1, $2, $3, $4)
@@ -39,7 +37,7 @@ export class RentService {
 
 
 			// по хорошему сделать в триггере после insert into car
-			await client.query(`update car set status = false where id=$1`, car_id);
+			await client.query(`update car set status = false where id=$1`, [car_id]);
 
 			return res.rows[0];
 		} catch (error) {
@@ -74,7 +72,7 @@ export class RentService {
 		// пауза в 3 дня между арендами
 		if (res.rows[0].last_rent) {	// not null
 			const diff = Math.floor(start_date.getTime() - res.rows[0].last_rent.getTime()) / (1000 * 60 * 60 * 24);
-			if (diff < 3)
+			if (diff < RentOptions.rent_interval)
 				throw new BadRequestException(`Car can be rented after 3 days since the last rent (last rent: ${res.rows[0].last_rent.toLocaleDateString()})`);
 		}
 
@@ -94,7 +92,7 @@ export class RentService {
 	}
 
 	// расчет стоимости аренды
-	private calcCost(days: number): number {
+	private calcCost(days: number): number { 	
 		let cost = 0;
 		for (let i = 1; i <= days; i++)
 			cost += RentOptions.cost - (RentOptions.cost * this.getDiscount(i) / 100);
@@ -114,7 +112,7 @@ export class RentService {
 			*/
 		const rate = RentOptions.rates.find((rate) => {
 			return for_day >= rate.from && for_day <= rate.to
-		})
+		});
 
 		return rate.discount;
 	}
@@ -143,7 +141,7 @@ export class RentService {
 		if (!res.rowCount)
 			throw new NotFoundException();
 
-		return res.rows[0]
+		return res.rows[0];
 	}
 
 
@@ -185,9 +183,7 @@ export class RentService {
 			return res.rows;
 
 		} catch (error) {
-			throw new BadRequestException(error.message);
+			throw new BadRequestException(error.message);	
 		}
 	}
-
-
 }

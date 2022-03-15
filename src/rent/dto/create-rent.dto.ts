@@ -1,11 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { IsDate, IsInt, Max, MAX, Min } from 'class-validator';
+import { IsDate, IsInt, Max, Min } from 'class-validator';
+import { RentOptions } from '../rates';
 
 export class CreateRentDto {
   @ApiProperty()
   @IsInt()
-  @Min(0)
+  @Min(1)
   readonly carId: number;
 
   @ApiProperty({
@@ -19,6 +20,6 @@ export class CreateRentDto {
   @ApiProperty()
   @IsInt()
   @Min(1)
-  @Max(30)
+  @Max(RentOptions.max_rent_days)
   readonly days: number;
 }

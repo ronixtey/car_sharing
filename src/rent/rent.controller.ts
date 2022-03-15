@@ -39,16 +39,4 @@ export class RentController {
 	getReport(@Param('months') for_months: number) {
 		return this.rentService.getReport(for_months);
 	}
-
-
-
-	/* @Get(':id')
-	@ApiResponse({
-		status: 200,
-		description: 'The found record',
-		type: Rent,
-	})
-	findOne(@Param('id') id: string): Rent {
-		return this.rentService.findOne(+id);
-	} */
 }

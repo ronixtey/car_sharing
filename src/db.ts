@@ -1,12 +1,12 @@
-import { Pool, Client } from 'pg'
+import { Client } from 'pg'
 import { RentOptions } from './rent/rates';
 
 export const client = new Client({
     user: 'postgres',
-    host: 'localhost',
+    host: process.env.DB_HOST,
     database: 'postgres',
     password: 'postgres',
-    port: 5431
+    port: 5432
 });
 
 export const InitDB = () => {
@@ -61,9 +61,9 @@ export const InitDB = () => {
 
     client.query('select 1 from car', (err, res) => {
         if (!res.rowCount)  // если пусто
-            // Заполняем автопарк   
+            // Заполняем автопарк      
             for (let i = 1; i <= RentOptions.max_cars; i++)
-                client.query(`insert into car (number) values ('Car #$1')`, i);
+                client.query(`insert into car (number) values ('Car #' || $1)`, [i]);
 
     });
 }
